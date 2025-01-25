@@ -7,9 +7,6 @@ import {
 import { useState } from "react";
 import { View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import TextInputs from "./TextInputs";
-import Input from "./Input";
-import NumberInput from "./NumberInput";
 
 const initialIntakeNutrition: IntakeNutrition = {
   ...initialNutritionSummary,
@@ -50,9 +47,6 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
       <Button mode="contained" onPress={() => onSubmit(productNutrition)}>
         Add
       </Button>
-      <TextInputs />
-      <Input value={value} setValue={setValue} />
-      <NumberInput />
     </View>
   );
 }
