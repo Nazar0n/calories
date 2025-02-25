@@ -1,13 +1,13 @@
 import CircularProgress from "@/components/CircularProgress";
 import NutritionDiagrams from "@/components/NutritionDiagrams";
 import NutritionForm from "@/components/NutritionForm";
-import { IntakeNutrition, NutritionSummary } from "@/constants/Nutritions";
+import { IntakeNutrition, Nutritions } from "@/entities/intakes/Intake";
 import { calculateIntakeNutritions } from "@/utils/nutritions.utils";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
-export const initialNutritionSummary: NutritionSummary = {
+const initialNutritionSummary: Nutritions = {
   calories: 0,
   proteins: 0,
   fats: 0,
@@ -15,7 +15,7 @@ export const initialNutritionSummary: NutritionSummary = {
 };
 
 export default function TestScreen() {
-  const [nutritionSummary, setNutritionSummary] = useState<NutritionSummary>(
+  const [nutritionSummary, setNutritionSummary] = useState<Nutritions>(
     initialNutritionSummary
   );
 

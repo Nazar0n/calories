@@ -1,13 +1,19 @@
+export type Nutritions = {
+  calories: number;
+  proteins: number;
+  fats: number;
+  carbs: number;
+};
+
+
+export type IntakeNutrition = Nutritions & { grams: number };
+
 export type Intake = {
   id: string;
   dayId: string;
   userId: string;
   productId: string | null;
   productName: string;
-  grams: number;
-  calories: number;
-  proteins: number;
-  fats: number;
-  carbs: number;
+  nutrition: IntakeNutrition;
   createdAt: Date;
 };

@@ -1,8 +1,17 @@
 import { db } from "@/FirebaseConfig";
-import { handleCollectionSnapshot } from "@/utils/firebaseUtils";
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
+import { DayData } from "./Day";
+import { convertObjectTimestamps } from "@/utils/firebaseUtils";
 
-export const fetchUserDays = ({ userId }: { userId: string }) => {
-  const q = query(collection(db, `users/${userId}/days`));
-  return getDocs(q).then(handleCollectionSnapshot);
-};
+export async function createDay(dayData: DayData) {
+  try {
+    const docRef = await addDoc(
+      collection(db, "days"),
+      convertObjectTimestamps(dayData)
+    );
+
+    console.log("Document written with ID: ", docRef.id);
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+}

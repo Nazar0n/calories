@@ -1,4 +1,4 @@
-import { IntakeNutrition } from "@/constants/Nutritions";
+import { IntakeNutrition } from "@/entities/intakes/Intake";
 
 const calculateNutrition = (nutrition: number, grams: number) => {
   return (nutrition * grams) / 100;

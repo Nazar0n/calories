@@ -1,16 +1,14 @@
+import { IntakeNutrition, Nutritions } from "@/entities/intakes/Intake";
 import React from "react";
 import { useState } from "react";
 import { View } from "react-native";
-import { StyleSheet } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import {
-  initialNutritionSummary,
-  IntakeNutrition,
-  NutritionSummary,
-} from "@/constants/Nutritions";
 
 const initialIntakeNutrition: IntakeNutrition = {
-  ...initialNutritionSummary,
+  calories: 0,
+  proteins: 0,
+  fats: 0,
+  carbs: 0,
   grams: 0,
 };
 
@@ -24,7 +22,7 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
     initialIntakeNutrition
   );
   const nutritionKeys = Object.keys(initialIntakeNutrition) as Array<
-    keyof NutritionSummary
+    keyof Nutritions
   >;
 
   return (
@@ -50,12 +48,3 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
     </View>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     display: "flex",
-//     alignItems: "center",
-//     flexDirection: "row",
-//     flexWrap: "wrap",
-//   },
-// });
