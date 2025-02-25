@@ -34,8 +34,8 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView>
-      <TextInput value={email} label="Email" onChangeText={setEmail} />
-      <TextInput value={password} label="Password" onChangeText={setPassword} />
+      <TextInput textContentType="emailAddress" value={email} label="Email" onChangeText={setEmail} />
+      <TextInput textContentType="password" value={password} label="Password" onChangeText={setPassword} />
       <Button mode="contained" onPress={signIn}>
         Login
       </Button>

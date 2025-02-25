@@ -1,12 +1,13 @@
 import React from "react";
+import { useState } from "react";
+import { View } from "react-native";
+import { StyleSheet } from "react-native";
+import { Button, TextInput } from "react-native-paper";
 import {
   initialNutritionSummary,
   IntakeNutrition,
   NutritionSummary,
 } from "@/constants/Nutritions";
-import { useState } from "react";
-import { View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
 
 const initialIntakeNutrition: IntakeNutrition = {
   ...initialNutritionSummary,
@@ -22,7 +23,6 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
   const [productNutrition, setProductNutrition] = useState<IntakeNutrition>(
     initialIntakeNutrition
   );
-  const [value, setValue] = useState();
   const nutritionKeys = Object.keys(initialIntakeNutrition) as Array<
     keyof NutritionSummary
   >;
@@ -40,7 +40,7 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
               [nutrition]: Number(value) || 0,
             }))
           }
-          style={{ marginBottom: 8 }}
+          style={{ marginBottom: 8, width: 150 }}
           keyboardType="number-pad"
         />
       ))}
@@ -50,3 +50,12 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
     </View>
   );
 }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     display: "flex",
+//     alignItems: "center",
+//     flexDirection: "row",
+//     flexWrap: "wrap",
+//   },
+// });

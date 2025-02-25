@@ -5,12 +5,12 @@ const calculateNutrition = (nutrition: number, grams: number) => {
 };
 
 export const calculateIntakeNutritions = (intakeNutrition: IntakeNutrition) => {
-  const { calories, protein, fat, carbs, grams } = intakeNutrition;
+  const { calories, proteins, fats, carbs, grams } = intakeNutrition;
 
   return {
     calories: calculateNutrition(calories, grams),
-    protein: calculateNutrition(protein, grams),
-    fat: calculateNutrition(fat, grams),
+    proteins: calculateNutrition(proteins, grams),
+    fats: calculateNutrition(fats, grams),
     carbs: calculateNutrition(carbs, grams),
   };
 };
