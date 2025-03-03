@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nazar0n.calories"
     },
     "android": {
       "adaptiveIcon": {
@@ -42,6 +43,13 @@
       "router": {
         "origin": false
       },
+      "firebaseApiKey": "AIzaSyDvH8ns7Dn_uVjpRo9HBv1kbmdKdUpjYpk",
+      "firebaseAuthDomain": "calories-expo.firebaseapp.com",
+      "firebaseProjectId": "calories-expo",
+      "firebaseStorageBucket": "calories-expo.firebasestorage.app",
+      "firebaseMessagingSenderId": "97702376256",
+      "firebaseAppId": "1:97702376256:web:fac8c60e58126812bcc0a5",
+      "firebaseMeasurementId": "G-7TYH3FY9SM",
       "eas": {
         "projectId": "bceafc6f-5e3b-40d8-8e2f-7a98b88aaa37"
       }

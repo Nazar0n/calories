@@ -1,45 +1,44 @@
-import { StyleSheet, SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import { useState } from "react";
-import { auth } from "@/FirebaseConfig";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { useEffect, useState } from "react";
+import { signIn, signUp } from "@/utils/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { router } from "expo-router";
+import { auth } from "@/FirebaseConfig";
 
 export default function HomeScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const signIn = async () => {
-    try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      if (user) router.replace("/(tabs)/testscreen");
-    } catch (e: any) {
-      console.log(e);
-      alert("Sign in failed: " + e.message);
-    }
-  };
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.replace("/(tabs)/testscreen");
+      }
+    });
 
-  const signUp = async () => {
-    try {
-      const user = await createUserWithEmailAndPassword(auth, email, password);
-      if (user) router.replace("/(tabs)/testscreen");
-    } catch (e: any) {
-      console.log(e);
-      alert("Sign up failed: " + e.message);
-    }
-  };
+    return unsubscribe;
+  }, []);
 
   return (
     <SafeAreaView>
-      <TextInput value={email} label="Email" onChangeText={setEmail} />
-      <TextInput value={password} label="Password" onChangeText={setPassword} />
-      <Button mode="contained" onPress={signIn}>
+      <TextInput
+        textContentType="emailAddress"
+        value={email}
+        label="Email"
+        onChangeText={setEmail}
+      />
+      <TextInput
+        secureTextEntry
+        textContentType="password"
+        value={password}
+        label="Password"
+        onChangeText={setPassword}
+      />
+      <Button mode="contained" onPress={() => signIn(email, password)}>
         Login
       </Button>
-      <Button mode="contained" onPress={signUp}>
+      <Button mode="contained" onPress={() => signUp(email, password)}>
         Make account
       </Button>
     </SafeAreaView>
