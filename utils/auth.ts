@@ -1,15 +1,22 @@
-import auth from "@react-native-firebase/auth";
+import { auth } from "@/FirebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 const USER_KEY = "loggedInUser";
 
 export async function signUp(email: string, password: string) {
   try {
-    const userCredential = await auth().createUserWithEmailAndPassword(
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
       email,
       password
     );
     const user = userCredential.user;
+    if (user) router.replace("/(tabs)/testscreen");
 
     await AsyncStorage.setItem(
       USER_KEY,
@@ -29,11 +36,13 @@ export async function signUp(email: string, password: string) {
 
 export async function signIn(email: string, password: string) {
   try {
-    const userCredential = await auth().signInWithEmailAndPassword(
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
       email,
       password
     );
     const user = userCredential.user;
+    if (user) router.replace("/(tabs)/testscreen");
 
     await AsyncStorage.setItem(
       USER_KEY,
@@ -61,12 +70,12 @@ export async function getStoredUser() {
   }
 }
 
-export async function signOut() {
-  try {
-    await auth().signOut();
-    await AsyncStorage.removeItem(USER_KEY);
-    console.log("User signed out");
-  } catch (error) {
-    console.error("Error signing out:", error);
-  }
-}
+// export async function signOut() {
+//   try {
+//     await signOut();
+//     await AsyncStorage.removeItem(USER_KEY);
+//     console.log("User signed out");
+//   } catch (error) {
+//     console.error("Error signing out:", error);
+//   }
+// }

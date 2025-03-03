@@ -1,38 +1,27 @@
-import { DocumentData, Timestamp } from "firebase/firestore";
+import { DocumentData } from "firebase/firestore";
 
-export const convertObjectTimestamps = (doc: any): Object => {
-  if (!(doc instanceof Object)) {
-    return doc;
+export function transformDates<T>(obj: T, toTimestamps: boolean): T {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => transformDates(item, toTimestamps)) as T;
+  } else if (toTimestamps && obj instanceof Date) {
+    return obj.getTime() as T;
+  } else if (
+    !toTimestamps &&
+    typeof obj === "number" &&
+    obj > 0 &&
+    obj < 9999999999999
+  ) {
+    return new Date(obj) as T;
+  } else if (obj !== null && typeof obj === "object") {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => [
+        key,
+        transformDates(value, toTimestamps),
+      ])
+    ) as T;
   }
-
-  return Object.entries(doc).reduce((acc, [key, value]) => {
-    if (value instanceof Timestamp) {
-      return {
-        ...acc,
-        [key]: value.toDate(),
-      };
-    }
-
-    if (value instanceof Array) {
-      return {
-        ...acc,
-        [key]: value.map(convertObjectTimestamps),
-      };
-    }
-
-    if (value instanceof Object) {
-      return {
-        ...acc,
-        [key]: convertObjectTimestamps(value),
-      };
-    }
-
-    return {
-      ...acc,
-      [key]: value,
-    };
-  }, {});
-};
+  return obj;
+}
 
 export const handleDocumentSnapshot = (snapshot: DocumentData) => {
   if (!snapshot.exists()) {
@@ -40,14 +29,14 @@ export const handleDocumentSnapshot = (snapshot: DocumentData) => {
   }
 
   return {
-    ...convertObjectTimestamps(snapshot.data()),
+    ...transformDates(snapshot.data(), false),
     id: snapshot.id,
   };
 };
 
 export const handleCollectionSnapshot = (snapshot: DocumentData) => {
   return snapshot.docs.map((doc: DocumentData) => ({
-    ...convertObjectTimestamps(doc.data()),
+    ...transformDates(doc.data(), false),
     id: doc.id,
   }));
 };

@@ -1,11 +1,15 @@
 import CircularProgress from "@/components/CircularProgress";
 import NutritionDiagrams from "@/components/NutritionDiagrams";
 import NutritionForm from "@/components/NutritionForm";
-import { IntakeNutrition, Nutritions } from "@/entities/intakes/Intake";
+import { DayData } from "@/entities/days/Day";
+import { createDay } from "@/entities/days/dayGateways";
+import { Intake, IntakeNutrition, Nutritions } from "@/entities/intakes/Intake";
+// import { addIntake } from "@/entities/intakes/intakeGateways";
 import { calculateIntakeNutritions } from "@/utils/nutritions.utils";
+import { getAuth } from "firebase/auth";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 
 const initialNutritionSummary: Nutritions = {
   calories: 0,
@@ -19,7 +23,16 @@ export default function TestScreen() {
     initialNutritionSummary
   );
 
+  const userId = getAuth().currentUser?.uid || "12345test";
+
   const handleAddIntake = (productNutrition: IntakeNutrition) => {
+    const intake = {
+      userId,
+      productId: null,
+      productName: "Test product",
+      nutrition: productNutrition,
+    };
+    // addIntake(userId, intake);
     const calculatedNutritions = calculateIntakeNutritions(productNutrition);
     setNutritionSummary({
       calories: nutritionSummary.calories + calculatedNutritions.calories,
@@ -30,6 +43,17 @@ export default function TestScreen() {
   };
 
   const maxCalories = 1500;
+
+  const handleCreateDay = () => {
+    console.log("Day created");
+    const dayData: DayData = {
+      date: new Date(),
+      createdAt: new Date(),
+      intakes: [],
+      userId,
+    };
+    createDay(dayData);
+  };
 
   return (
     <ScrollView>
@@ -53,6 +77,7 @@ export default function TestScreen() {
             carbs={nutritionSummary.carbs}
           />
         </View>
+        <Button onPress={handleCreateDay}>Create day</Button>
         <NutritionForm style={{ width: "100%" }} onSubmit={handleAddIntake} />
       </View>
     </ScrollView>

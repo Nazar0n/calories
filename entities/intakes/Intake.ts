@@ -10,7 +10,6 @@ export type IntakeNutrition = Nutritions & { grams: number };
 
 export type Intake = {
   id: string;
-  dayId: string;
   userId: string;
   productId: string | null;
   productName: string;
