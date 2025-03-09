@@ -2,6 +2,7 @@ import { doc, getDoc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { Intake } from "./Intake";
 import { DayData } from "../days/Day";
 import { db } from "@/FirebaseConfig";
+import { nanoid } from "nanoid/non-secure";
 
 type DateOrTimestamp = Date | Timestamp;
 
@@ -34,42 +35,39 @@ function getCurrentDateString(): string {
   return new Date().toISOString().split("T")[0]; // Отримуємо YYYY-MM-DD
 }
 
-// export async function addIntake(
-//   userId: string,
-//   intake: Omit<Intake, "id" | "dayId" | "createdAt">
-// ) {
-//   console.log("asd");
-//   const date = getCurrentDateString();
-//   const dayRef = doc(db, "days", `${userId}_${date}`);
-//   const daySnap = await getDoc(dayRef);
+export async function addIntake(
+  userId: string,
+  intake: Omit<Intake, "id" | "dayId" | "createdAt">
+) {
+  const date = getCurrentDateString();
+  const dayRef = doc(db, "days", `${userId}_${date}`);
+  const daySnap = await getDoc(dayRef);
 
-//   let dayData: DayData;
+  let dayData: DayData;
 
-//   if (daySnap.exists()) {
-//     console.log("exists");
-//     dayData = daySnap.data() as DayData;
-//   } else {
-//     dayData = {
-//       userId,
-//       date: new Date(date),
-//       intakes: [],
-//       createdAt: new Date(),
-//     };
-//     await setDoc(dayRef, dayData);
-//   }
+  if (daySnap.exists()) {
+    dayData = daySnap.data() as DayData;
+  } else {
+    dayData = {
+      userId,
+      date: new Date(date),
+      intakes: [],
+      createdAt: new Date(),
+    };
+    await setDoc(dayRef, dayData);
+  }
 
-//   const newIntake: IntakeData = {
-//     ...intake,
-//     dayId: dayRef.id,
-//     createdAt: new Date(),
-//     userId,
-//   };
+  const newIntake: Intake = {
+    ...intake,
+    id: nanoid(),
+    dayId: dayRef.id,
+    createdAt: new Date(),
+    userId,
+  };
 
-//   const updatedIntakes = [...dayData.intakes, newIntake];
-//   console.log("asasdadsa");
+  const updatedIntakes = [...dayData.intakes, newIntake];
 
-//   await updateDoc(dayRef, convertDates({ intakes: updatedIntakes }));
+  await updateDoc(dayRef, convertDates({ intakes: updatedIntakes }));
 
-//   return newIntake;
-// }
-
+  return newIntake;
+}

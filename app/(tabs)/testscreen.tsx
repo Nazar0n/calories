@@ -1,15 +1,15 @@
 import CircularProgress from "@/components/CircularProgress";
 import NutritionDiagrams from "@/components/NutritionDiagrams";
 import NutritionForm from "@/components/NutritionForm";
-import { DayData } from "@/entities/days/Day";
-import { createDay } from "@/entities/days/dayGateways";
-import { Intake, IntakeNutrition, Nutritions } from "@/entities/intakes/Intake";
-// import { addIntake } from "@/entities/intakes/intakeGateways";
+import { Day } from "@/entities/days/Day";
+import { fetchToday } from "@/entities/days/dayGateways";
+import { IntakeNutrition, Nutritions } from "@/entities/intakes/Intake";
+import { addIntake } from "@/entities/intakes/intakeGateways";
 import { calculateIntakeNutritions } from "@/utils/nutritions.utils";
 import { getAuth } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 
 const initialNutritionSummary: Nutritions = {
   calories: 0,
@@ -19,41 +19,38 @@ const initialNutritionSummary: Nutritions = {
 };
 
 export default function TestScreen() {
-  const [nutritionSummary, setNutritionSummary] = useState<Nutritions>(
-    initialNutritionSummary
-  );
+  const [day, setDay] = useState<Day | null>(null);
 
   const userId = getAuth().currentUser?.uid || "12345test";
 
-  const handleAddIntake = (productNutrition: IntakeNutrition) => {
+  const nutritionSummary =
+    day?.intakes.reduce((acc, intake) => {
+      const calculatedNutritions = calculateIntakeNutritions(intake.nutrition);
+      return {
+        calories: acc.calories + calculatedNutritions.calories,
+        proteins: acc.proteins + calculatedNutritions.proteins,
+        fats: acc.fats + calculatedNutritions.fats,
+        carbs: acc.carbs + calculatedNutritions.carbs,
+      };
+    }, initialNutritionSummary) || initialNutritionSummary;
+
+  const handleAddIntake = async (productNutrition: IntakeNutrition) => {
     const intake = {
       userId,
       productId: null,
       productName: "Test product",
       nutrition: productNutrition,
+      createdAt: new Date(),
     };
-    // addIntake(userId, intake);
-    const calculatedNutritions = calculateIntakeNutritions(productNutrition);
-    setNutritionSummary({
-      calories: nutritionSummary.calories + calculatedNutritions.calories,
-      proteins: nutritionSummary.proteins + calculatedNutritions.proteins,
-      fats: nutritionSummary.fats + calculatedNutritions.fats,
-      carbs: nutritionSummary.carbs + calculatedNutritions.carbs,
-    });
+    await addIntake(userId, intake);
+    fetchToday(userId).then((day) => setDay(day));
   };
 
   const maxCalories = 1500;
 
-  const handleCreateDay = () => {
-    console.log("Day created");
-    const dayData: DayData = {
-      date: new Date(),
-      createdAt: new Date(),
-      intakes: [],
-      userId,
-    };
-    createDay(dayData);
-  };
+  useEffect(() => {
+    fetchToday(userId).then((day) => setDay(day));
+  }, [userId]);
 
   return (
     <ScrollView>
@@ -77,7 +74,6 @@ export default function TestScreen() {
             carbs={nutritionSummary.carbs}
           />
         </View>
-        <Button onPress={handleCreateDay}>Create day</Button>
         <NutritionForm style={{ width: "100%" }} onSubmit={handleAddIntake} />
       </View>
     </ScrollView>
