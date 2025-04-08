@@ -8,6 +8,8 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
+/ios
+/android
 
 # Native
 *.orig.*
@@ -32,6 +34,7 @@ yarn-error.*
 # local env files
 .env*.local
 .app.config.json
+.app.json
 
 # typescript
 *.tsbuildinfo
