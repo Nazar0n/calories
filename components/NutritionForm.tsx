@@ -12,12 +12,18 @@ const initialIntakeNutrition: IntakeNutrition = {
   grams: 0,
 };
 
+type FormData = {
+  productName: string;
+  nutrition: IntakeNutrition;
+};
+
 type IntakeFormProps = {
   style?: any;
-  onSubmit: (intakeNutrition: IntakeNutrition) => void;
+  onSubmit: (data: FormData) => void;
 };
 
 export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
+  const [productName, setProductName] = useState("");
   const [productNutrition, setProductNutrition] = useState<IntakeNutrition>(
     initialIntakeNutrition
   );
@@ -25,24 +31,46 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
     keyof Nutritions
   >;
 
+  const handleSubmit = () => {
+    onSubmit({
+      productName: productName.trim() || `Food (${productNutrition.calories} kcal)`,
+      nutrition: productNutrition
+    });
+    // Reset form
+    setProductName("");
+    setProductNutrition(initialIntakeNutrition);
+  };
+
   return (
     <View style={style}>
-      {nutritionKeys.map((nutrition) => (
-        <TextInput
-          key={nutrition}
-          value={String(productNutrition[nutrition])}
-          label={`${nutrition} per 100g`}
-          onChangeText={(value) =>
-            setProductNutrition((prev) => ({
-              ...prev,
-              [nutrition]: Number(value) || 0,
-            }))
-          }
-          style={{ marginBottom: 8, width: 150 }}
-          keyboardType="number-pad"
-        />
-      ))}
-      <Button mode="contained" onPress={() => onSubmit(productNutrition)}>
+      <TextInput
+        value={productName}
+        onChangeText={setProductName}
+        label="Product Name (optional)"
+        style={{ marginBottom: 16 }}
+      />
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        {nutritionKeys.map((nutrition) => (
+          <TextInput
+            key={nutrition}
+            value={String(productNutrition[nutrition])}
+            label={`${nutrition} per 100g`}
+            onChangeText={(value) =>
+              setProductNutrition((prev) => ({
+                ...prev,
+                [nutrition]: Number(value) || 0,
+              }))
+            }
+            style={{ width: '48%' }}
+            keyboardType="number-pad"
+          />
+        ))}
+      </View>
+      <Button 
+        mode="contained" 
+        onPress={handleSubmit} 
+        style={{ marginTop: 16 }}
+      >
         Add
       </Button>
     </View>

@@ -23,7 +23,6 @@ export async function fetchToday(userId: string): Promise<Day | null> {
   const daySnap = await getDoc(dayRef);
 
   if (!daySnap.exists()) {
-    console.log("Дані за сьогодні відсутні.");
     return null;
   }
 

@@ -71,3 +71,19 @@ export async function addIntake(
 
   return newIntake;
 }
+
+export async function deleteIntake(userId: string, intakeId: string) {
+  const date = getCurrentDateString();
+  const dayRef = doc(db, "days", `${userId}_${date}`);
+  const daySnap = await getDoc(dayRef);
+
+  if (!daySnap.exists()) {
+    throw new Error("Day document not found");
+  }
+
+  const dayData = daySnap.data() as DayData;
+  const updatedIntakes = dayData.intakes.filter(intake => intake.id !== intakeId);
+
+  // No need to convert dates since they are already in the correct format in Firestore
+  await updateDoc(dayRef, { intakes: updatedIntakes });
+}

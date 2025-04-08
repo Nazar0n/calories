@@ -76,7 +76,7 @@ const CircularProgress = ({
             <Text style={{ fontWeight: "bold" }}>
               {Math.round(value)}/{maxValue}
             </Text>
-            <Text>kkal</Text>
+            <Text>kcal</Text>
           </View>
         )}
       </View>

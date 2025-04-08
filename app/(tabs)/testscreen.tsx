@@ -1,15 +1,14 @@
-import CircularProgress from "@/components/CircularProgress";
-import NutritionDiagrams from "@/components/NutritionDiagrams";
-import NutritionForm from "@/components/NutritionForm";
 import { Day } from "@/entities/days/Day";
 import { fetchToday } from "@/entities/days/dayGateways";
 import { IntakeNutrition, Nutritions } from "@/entities/intakes/Intake";
 import { addIntake } from "@/entities/intakes/intakeGateways";
-import { calculateIntakeNutritions } from "@/utils/nutritions.utils";
 import { getAuth } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import IntakesList from "@/components/IntakesList";
+import NutritionSummary from "@/components/NutritionSummary";
+import AddFoodControls from "@/components/AddFoodControls";
+import { calculateIntakeNutritions } from "@/utils/nutritions.utils";
 
 const initialNutritionSummary: Nutritions = {
   calories: 0,
@@ -20,7 +19,6 @@ const initialNutritionSummary: Nutritions = {
 
 export default function TestScreen() {
   const [day, setDay] = useState<Day | null>(null);
-
   const userId = getAuth().currentUser?.uid || "12345test";
 
   const nutritionSummary =
@@ -34,12 +32,15 @@ export default function TestScreen() {
       };
     }, initialNutritionSummary) || initialNutritionSummary;
 
-  const handleAddIntake = async (productNutrition: IntakeNutrition) => {
+  const handleAddIntake = async (formData: {
+    productName: string;
+    nutrition: IntakeNutrition;
+  }) => {
     const intake = {
       userId,
       productId: null,
-      productName: "Test product",
-      nutrition: productNutrition,
+      productName: formData.productName,
+      nutrition: formData.nutrition,
       createdAt: new Date(),
     };
     await addIntake(userId, intake);
@@ -53,45 +54,37 @@ export default function TestScreen() {
   }, [userId]);
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
-        <Text
-          style={{ color: "#000", textAlign: "center", marginTop: 24 }}
-          variant="displayLarge"
-        >
-          Total
-        </Text>
-        <View>
-          <CircularProgress
-            value={nutritionSummary.calories}
-            maxValue={maxCalories}
+        <NutritionSummary
+          nutritionSummary={nutritionSummary}
+          maxCalories={maxCalories}
+        />
+
+        <AddFoodControls onAddIntake={handleAddIntake} />
+
+        {day?.intakes && (
+          <IntakesList
+            intakes={day.intakes}
+            onIntakeDeleted={() =>
+              fetchToday(userId).then((day) => setDay(day))
+            }
           />
-        </View>
-        <View style={styles.nutritionDiagrams}>
-          <NutritionDiagrams
-            proteins={nutritionSummary.proteins}
-            fats={nutritionSummary.fats}
-            carbs={nutritionSummary.carbs}
-          />
-        </View>
-        <NutritionForm style={{ width: "100%" }} onSubmit={handleAddIntake} />
+        )}
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: '#fff',
+  },
   container: {
     display: "flex",
     padding: 8,
     backgroundColor: "#fff",
     color: "#000",
-    alignItems: "center", // Додає центрування всього контенту
-  },
-  nutritionDiagrams: {
-    width: "100%",
-    justifyContent: "center",
     alignItems: "center",
-    alignSelf: "center", // Центрує NutritionDiagrams
   },
 });
