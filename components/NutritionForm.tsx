@@ -1,8 +1,16 @@
-import { IntakeNutrition, Nutritions } from "@/entities/intakes/Intake";
-import React from "react";
-import { useState } from "react";
-import { View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import React, { useState } from 'react';
+
+import { View } from 'react-native';
+import {
+  Button,
+  TextInput,
+} from 'react-native-paper';
+
+import {
+  IntakeNutrition,
+  Nutritions,
+} from '@/entities/intakes/Intake';
+import { calculateIntakeNutritions } from '@/utils/nutritions.utils';
 
 const initialIntakeNutrition: IntakeNutrition = {
   calories: 0,
@@ -32,9 +40,10 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
   >;
 
   const handleSubmit = () => {
+    const nutrition = calculateIntakeNutritions(productNutrition);
     onSubmit({
       productName: productName.trim() || `Food (${productNutrition.calories} kcal)`,
-      nutrition: productNutrition
+      nutrition,
     });
     // Reset form
     setProductName("");

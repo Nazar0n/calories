@@ -1,14 +1,25 @@
-import { Day } from "@/entities/days/Day";
-import { fetchToday } from "@/entities/days/dayGateways";
-import { IntakeNutrition, Nutritions } from "@/entities/intakes/Intake";
-import { addIntake } from "@/entities/intakes/intakeGateways";
-import { getAuth } from "firebase/auth";
-import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import IntakesList from "@/components/IntakesList";
-import NutritionSummary from "@/components/NutritionSummary";
-import AddFoodControls from "@/components/AddFoodControls";
-import { calculateIntakeNutritions } from "@/utils/nutritions.utils";
+import {
+  useEffect,
+  useState,
+} from 'react';
+
+import { getAuth } from 'firebase/auth';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
+
+import AddFoodControls from '@/components/AddFoodControls';
+import IntakesList from '@/components/IntakesList';
+import NutritionSummary from '@/components/NutritionSummary';
+import { Day } from '@/entities/days/Day';
+import { fetchToday } from '@/entities/days/dayGateways';
+import {
+  IntakeNutrition,
+  Nutritions,
+} from '@/entities/intakes/Intake';
+import { addIntake } from '@/entities/intakes/intakeGateways';
 
 const initialNutritionSummary: Nutritions = {
   calories: 0,
@@ -23,12 +34,12 @@ export default function TestScreen() {
 
   const nutritionSummary =
     day?.intakes.reduce((acc, intake) => {
-      const calculatedNutritions = calculateIntakeNutritions(intake.nutrition);
+      const { nutrition } = intake;
       return {
-        calories: acc.calories + calculatedNutritions.calories,
-        proteins: acc.proteins + calculatedNutritions.proteins,
-        fats: acc.fats + calculatedNutritions.fats,
-        carbs: acc.carbs + calculatedNutritions.carbs,
+        calories: acc.calories + nutrition.calories,
+        proteins: acc.proteins + nutrition.proteins,
+        fats: acc.fats + nutrition.fats,
+        carbs: acc.carbs + nutrition.carbs,
       };
     }, initialNutritionSummary) || initialNutritionSummary;
 

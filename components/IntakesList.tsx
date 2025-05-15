@@ -1,19 +1,30 @@
-import { Intake } from "@/entities/intakes/Intake";
-import { calculateIntakeNutritions } from "@/utils/nutritions.utils";
-import { View, StyleSheet } from "react-native";
-import { Card, Text, Button, IconButton, ActivityIndicator } from "react-native-paper";
-import { deleteIntake } from "@/entities/intakes/intakeGateways";
-import { getAuth } from "firebase/auth";
-import { useState } from "react";
+import { useState } from 'react';
+
+import { getAuth } from 'firebase/auth';
+import {
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  ActivityIndicator,
+  Card,
+  IconButton,
+  Text,
+} from 'react-native-paper';
+
+import { Intake } from '@/entities/intakes/Intake';
+import { deleteIntake } from '@/entities/intakes/intakeGateways';
 
 type IntakesListProps = {
   intakes: Intake[];
   onIntakeDeleted?: () => void;
 };
 
-export default function IntakesList({ intakes, onIntakeDeleted }: IntakesListProps) {
+export default function IntakesList({
+  intakes,
+  onIntakeDeleted,
+}: IntakesListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
   const handleDelete = async (intakeId: string) => {
     const userId = getAuth().currentUser?.uid;
     if (!userId) {
@@ -35,7 +46,7 @@ export default function IntakesList({ intakes, onIntakeDeleted }: IntakesListPro
   return (
     <View style={styles.container}>
       {intakes.map((intake, index) => {
-        const nutrition = calculateIntakeNutritions(intake.nutrition);
+        const { nutrition } = intake;
         const isDeleting = deletingId === intake.id;
 
         return (
@@ -56,10 +67,10 @@ export default function IntakesList({ intakes, onIntakeDeleted }: IntakesListPro
                 )}
               </View>
               <View style={styles.nutritionInfo}>
-                <Text>Calories: {nutrition.calories.toFixed(0)}</Text>
-                <Text>Proteins: {nutrition.proteins.toFixed(1)}g</Text>
-                <Text>Fats: {nutrition.fats.toFixed(1)}g</Text>
-                <Text>Carbs: {nutrition.carbs.toFixed(1)}g</Text>
+                <Text>Calories: {nutrition.calories}</Text>
+                <Text>Proteins: {nutrition.proteins}g</Text>
+                <Text>Fats: {nutrition.fats}g</Text>
+                <Text>Carbs: {nutrition.carbs}g</Text>
               </View>
               <Text variant="bodySmall" style={styles.time}>
                 {new Date(intake.createdAt).toLocaleTimeString()}
@@ -81,9 +92,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   nutritionInfo: {
     marginTop: 8,
@@ -94,4 +105,4 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: "right",
   },
-}); 
+});

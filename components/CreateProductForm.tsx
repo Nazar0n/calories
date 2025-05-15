@@ -1,10 +1,18 @@
-import { View, StyleSheet } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
-import { useState } from "react";
-import { Product } from "@/entities/products/Product";
-import { createProduct } from "@/entities/products/productGateways";
-import { getAuth } from "firebase/auth";
-import { Nutritions } from "@/entities/intakes/Intake";
+import { useState } from 'react';
+
+import { getAuth } from 'firebase/auth';
+import {
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  Button,
+  Text,
+  TextInput,
+} from 'react-native-paper';
+
+import { Nutritions } from '@/entities/intakes/Intake';
+import { createProduct } from '@/entities/products/productGateways';
 
 type CreateProductFormProps = {
   onSuccess: () => void;
@@ -61,7 +69,7 @@ export default function CreateProductForm({ onSuccess, onCancel }: CreateProduct
                 [field]: Number(value) || 0,
               }))
             }
-            keyboardType="numeric"
+            keyboardType="number-pad"
             style={styles.nutritionInput}
           />
         ))}

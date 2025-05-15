@@ -1,9 +1,20 @@
-import { View, StyleSheet, ScrollView } from "react-native";
-import { Button, TextInput, Text, Surface } from "react-native-paper";
-import { useState } from "react";
-import { createProduct } from "@/entities/products/productGateways";
-import { getAuth } from "firebase/auth";
-import { Nutritions } from "@/entities/intakes/Intake";
+import { useState } from 'react';
+
+import { getAuth } from 'firebase/auth';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  Button,
+  Surface,
+  Text,
+  TextInput,
+} from 'react-native-paper';
+
+import { Nutritions } from '@/entities/intakes/Intake';
+import { createProduct } from '@/entities/products/productGateways';
 
 const initialNutrition: Nutritions = {
   calories: 0,
@@ -72,7 +83,7 @@ export default function CreateProductModal({ visible, onSuccess, onCancel }: Cre
                     [field]: Number(value) || 0,
                   }))
                 }
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 style={styles.nutritionInput}
               />
             ))}
