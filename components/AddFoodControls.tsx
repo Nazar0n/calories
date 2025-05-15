@@ -1,13 +1,22 @@
-import { View, StyleSheet } from "react-native";
-import { Button } from "react-native-paper";
-import { IntakeNutrition } from "@/entities/intakes/Intake";
-import { Product } from "@/entities/products/Product";
-import NutritionForm from "./NutritionForm";
-import SelectProduct from "./SelectProduct";
-import React, { useState } from "react";
+import React, { useState } from 'react';
+
+import {
+  StyleSheet,
+  View,
+} from 'react-native';
+import { Button } from 'react-native-paper';
+
+import { IntakeNutrition } from '@/entities/intakes/Intake';
+import { Product } from '@/entities/products/Product';
+
+import NutritionForm from './NutritionForm';
+import SelectProduct from './SelectProduct';
 
 type AddFoodControlsProps = {
-  onAddIntake: (formData: { productName: string; nutrition: IntakeNutrition }) => void;
+  onAddIntake: (formData: {
+    productName: string;
+    nutrition: IntakeNutrition;
+  }) => void;
 };
 
 export default function AddFoodControls({ onAddIntake }: AddFoodControlsProps) {
@@ -15,16 +24,16 @@ export default function AddFoodControls({ onAddIntake }: AddFoodControlsProps) {
   const [isSelectProductVisible, setIsSelectProductVisible] = useState(false);
 
   const handleProductSelect = (product: Product, grams: number) => {
+    const nutrition = {
+      grams,
+      calories: (product.nutrition.calories * grams) / 100,
+      proteins: (product.nutrition.proteins * grams) / 100,
+      fats: (product.nutrition.fats * grams) / 100,
+      carbs: (product.nutrition.carbs * grams) / 100,
+    };
     onAddIntake({
       productName: product.name,
-      nutrition: {
-        ...product.nutrition,
-        grams,
-        calories: (product.nutrition.calories * grams) / 100,
-        proteins: (product.nutrition.proteins * grams) / 100,
-        fats: (product.nutrition.fats * grams) / 100,
-        carbs: (product.nutrition.carbs * grams) / 100,
-      }
+      nutrition,
     });
     setIsSelectProductVisible(false);
   };
@@ -66,12 +75,12 @@ export default function AddFoodControls({ onAddIntake }: AddFoodControlsProps) {
 
 const styles = StyleSheet.create({
   formButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
     marginBottom: 16,
-    width: '100%',
+    width: "100%",
   },
   formButton: {
     flex: 1,
   },
-}); 
+});
