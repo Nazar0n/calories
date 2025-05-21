@@ -12,7 +12,6 @@ import {
 import {
   ActivityIndicator,
   Button,
-  Card,
   Modal,
   Portal,
   Surface,
@@ -20,11 +19,14 @@ import {
   TextInput,
 } from 'react-native-paper';
 
-import { Nutritions } from '@/entities/intakes/Intake';
 import { Product } from '@/entities/products/Product';
-import { getUserProducts } from '@/entities/products/productGateways';
+import {
+  deleteProduct,
+  getUserProducts,
+} from '@/entities/products/productGateways';
 
 import CreateProductForm from './CreateProductForm';
+import ProductCard from './ProductCard';
 
 type SelectProductProps = {
   visible: boolean;
@@ -32,12 +34,7 @@ type SelectProductProps = {
   onCancel: () => void;
 };
 
-const initialNutrition: Nutritions = {
-  calories: 0,
-  proteins: 0,
-  fats: 0,
-  carbs: 0,
-};
+type ViewState = "loading" | "empty" | "list" | "creating";
 
 export default function SelectProduct({
   visible,
@@ -45,21 +42,45 @@ export default function SelectProduct({
   onCancel,
 }: SelectProductProps) {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewState, setViewState] = useState<ViewState>("loading");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [grams, setGrams] = useState<number>(0);
-  const [isCreating, setIsCreating] = useState(false);
 
   const loadProducts = async () => {
     const userId = getAuth().currentUser?.uid;
     if (userId) {
-      setLoading(true);
+      setViewState("loading");
       try {
         const products = await getUserProducts(userId);
         setProducts(products);
-      } finally {
-        setLoading(false);
+        setFilteredProducts(products);
+        setViewState(products.length === 0 ? "empty" : "list");
+      } catch (error) {
+        console.error("Error loading products:", error);
+        setViewState("empty");
       }
+    }
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    const filtered = products.filter(product =>
+      product.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  };
+
+  const handleDeleteProduct = async (product: Product) => {
+    const userId = getAuth().currentUser?.uid;
+    if (!userId) return;
+
+    try {
+      await deleteProduct(product.id);
+      await loadProducts();
+    } catch (error) {
+      console.error("Error deleting product:", error);
     }
   };
 
@@ -69,7 +90,7 @@ export default function SelectProduct({
     } else {
       setSelectedProduct(null);
       setGrams(0);
-      setIsCreating(false);
+      setViewState("loading");
     }
   }, [visible]);
 
@@ -78,6 +99,62 @@ export default function SelectProduct({
       onSelect(selectedProduct, Number(grams));
       setSelectedProduct(null);
       setGrams(0);
+    }
+  };
+
+  const renderContent = () => {
+    switch (viewState) {
+      case "loading":
+        return <ActivityIndicator size="large" style={styles.loader} />;
+      case "empty":
+        return (
+          <Text style={styles.emptyText}>
+            No products found. Create some first!
+          </Text>
+        );
+      case "creating":
+        return (
+          <CreateProductForm
+            onSuccess={() => {
+              setViewState("list");
+              loadProducts();
+            }}
+            onCancel={() => setViewState("list")}
+          />
+        );
+      case "list":
+        return (
+          <>
+            <TextInput
+              mode="outlined"
+              label="Search products"
+              value={searchQuery}
+              onChangeText={handleSearch}
+              style={styles.searchInput}
+              right={
+                searchQuery ? (
+                  <TextInput.Icon
+                    icon="close"
+                    onPress={() => handleSearch("")}
+                  />
+                ) : null
+              }
+            />
+            <FlatList
+              data={filteredProducts}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item: product }) => (
+                <ProductCard
+                  product={product}
+                  onPress={setSelectedProduct}
+                  onDelete={handleDeleteProduct}
+                />
+              )}
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+            />
+          </>
+        );
     }
   };
 
@@ -98,61 +175,28 @@ export default function SelectProduct({
 
             <Button
               mode="contained"
-              onPress={() => setIsCreating(!isCreating)}
+              onPress={() =>
+                setViewState(viewState === "creating" ? "list" : "creating")
+              }
               style={styles.createButton}
             >
-              {isCreating ? "Cancel Creating" : "Create New Product"}
+              {viewState === "creating"
+                ? "Cancel Creating"
+                : "Create New Product"}
             </Button>
           </View>
 
-          <View style={styles.contentContainer}>
-            {isCreating ? (
-              <CreateProductForm
-                onSuccess={() => {
-                  setIsCreating(false);
-                  loadProducts();
-                }}
-                onCancel={() => setIsCreating(false)}
-              />
-            ) : loading ? (
-              <ActivityIndicator size="large" style={styles.loader} />
-            ) : products.length === 0 ? (
-              <Text style={styles.emptyText}>
-                No products found. Create some first!
-              </Text>
-            ) : (
-              <FlatList
-                data={products}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item: product }) => (
-                  <Card
-                    style={styles.card}
-                    onPress={() => setSelectedProduct(product)}
-                  >
-                    <Card.Content>
-                      <Text variant="titleMedium">{product.name}</Text>
-                      <View style={styles.nutritionInfo}>
-                        <Text>Calories: {product.nutrition.calories}</Text>
-                        <Text>Proteins: {product.nutrition.proteins}g</Text>
-                        <Text>Fats: {product.nutrition.fats}g</Text>
-                        <Text>Carbs: {product.nutrition.carbs}g</Text>
-                      </View>
-                    </Card.Content>
-                  </Card>
-                )}
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-              />
-            )}
-          </View>
+          <View style={styles.contentContainer}>{renderContent()}</View>
 
-          <Button
-            mode="outlined"
-            onPress={onCancel}
-            style={styles.cancelButton}
-          >
-            Cancel
-          </Button>
+          {viewState === "list" && (
+            <Button
+              mode="outlined"
+              onPress={onCancel}
+              style={styles.cancelButton}
+            >
+              Cancel
+            </Button>
+          )}
 
           <Portal>
             <Modal
@@ -269,6 +313,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   createButton: {
+    marginBottom: 16,
+  },
+  searchInput: {
     marginBottom: 16,
   },
 });
