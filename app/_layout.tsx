@@ -1,17 +1,16 @@
+import 'react-native-reanimated';
+import { useEffect } from 'react';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { PaperProvider } from 'react-native-paper';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
-} from "@react-navigation/native";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import "react-native-reanimated";
-import { PaperProvider } from "react-native-paper";
-
-import { useColorScheme } from "@/hooks/useColorScheme";
+} from '@react-navigation/native';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
