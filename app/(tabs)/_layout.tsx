@@ -1,9 +1,7 @@
 import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
 
   return (
     <Tabs
@@ -17,11 +15,20 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="testscreen"
+        name="home"
         options={{
-          title: 'Calories',
+          title: 'Калорії',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="food" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Профіль',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="account" size={24} color={color} />
           ),
         }}
       />

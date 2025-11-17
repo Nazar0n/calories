@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
   GestureResponderEvent,
   StyleSheet,
@@ -10,7 +9,6 @@ import {
   IconButton,
   Text,
 } from 'react-native-paper';
-
 import { Product } from '@/entities/products/Product';
 
 type ProductCardProps = {
@@ -37,10 +35,10 @@ function ProductCard({ product, onPress, onDelete }: ProductCardProps) {
           />
         </View>
         <View style={styles.nutritionInfo}>
-          <Text>Calories: {product.nutrition.calories}</Text>
-          <Text>Proteins: {product.nutrition.proteins}g</Text>
-          <Text>Fats: {product.nutrition.fats}g</Text>
-          <Text>Carbs: {product.nutrition.carbs}g</Text>
+          <Text>Калорії: {product.nutrition.calories}</Text>
+          <Text>Білки: {product.nutrition.proteins}g</Text>
+          <Text>Жири: {product.nutrition.fats}g</Text>
+          <Text>Вуглеводи: {product.nutrition.carbs}g</Text>
         </View>
       </Card.Content>
     </Card>

@@ -1,8 +1,14 @@
-import { doc, getDoc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
-import { Intake } from "./Intake";
-import { DayData } from "../days/Day";
-import { db } from "@/FirebaseConfig";
-import { nanoid } from "nanoid/non-secure";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  Timestamp,
+  updateDoc,
+} from 'firebase/firestore';
+import { nanoid } from 'nanoid/non-secure';
+import { db } from '@/FirebaseConfig';
+import { DayData } from '../days/Day';
+import { Intake } from './Intake';
 
 type DateOrTimestamp = Date | Timestamp;
 
@@ -31,16 +37,17 @@ function convertDates<T>(obj: T): T {
   return obj; // Якщо це не Date/Timestamp, повертаємо без змін
 }
 
-function getCurrentDateString(): string {
-  return new Date().toISOString().split("T")[0]; // Отримуємо YYYY-MM-DD
+function getDateString(date: Date): string {
+  return date.toISOString().split("T")[0]; // Отримуємо YYYY-MM-DD
 }
 
 export async function addIntake(
   userId: string,
-  intake: Omit<Intake, "id" | "dayId" | "createdAt">
+  intake: Omit<Intake, "id" | "dayId" | "createdAt">,
+  date: Date = new Date()
 ) {
-  const date = getCurrentDateString();
-  const dayRef = doc(db, "days", `${userId}_${date}`);
+  const dateString = getDateString(date);
+  const dayRef = doc(db, "days", `${userId}_${dateString}`);
   const daySnap = await getDoc(dayRef);
 
   let dayData: DayData;
@@ -50,7 +57,7 @@ export async function addIntake(
   } else {
     dayData = {
       userId,
-      date: new Date(date),
+      date: new Date(dateString),
       intakes: [],
       createdAt: new Date(),
     };
@@ -61,7 +68,7 @@ export async function addIntake(
     ...intake,
     id: nanoid(),
     dayId: dayRef.id,
-    createdAt: new Date(),
+    createdAt: date,
     userId,
   };
 
@@ -72,9 +79,13 @@ export async function addIntake(
   return newIntake;
 }
 
-export async function deleteIntake(userId: string, intakeId: string) {
-  const date = getCurrentDateString();
-  const dayRef = doc(db, "days", `${userId}_${date}`);
+export async function deleteIntake(
+  userId: string, 
+  intakeId: string,
+  date: Date = new Date()
+) {
+  const dateString = getDateString(date);
+  const dayRef = doc(db, "days", `${userId}_${dateString}`);
   const daySnap = await getDoc(dayRef);
 
   if (!daySnap.exists()) {

@@ -2,7 +2,6 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-
 import { getAuth } from 'firebase/auth';
 import {
   FlatList,
@@ -18,13 +17,11 @@ import {
   Text,
   TextInput,
 } from 'react-native-paper';
-
 import { Product } from '@/entities/products/Product';
 import {
   deleteProduct,
   getUserProducts,
 } from '@/entities/products/productGateways';
-
 import CreateProductForm from './CreateProductForm';
 import ProductCard from './ProductCard';
 
@@ -66,7 +63,7 @@ export default function SelectProduct({
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    const filtered = products.filter(product =>
+    const filtered = products.filter((product) =>
       product.name.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredProducts(filtered);
@@ -108,9 +105,14 @@ export default function SelectProduct({
         return <ActivityIndicator size="large" style={styles.loader} />;
       case "empty":
         return (
-          <Text style={styles.emptyText}>
-            No products found. Create some first!
-          </Text>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              Немає продуктів. Створіть декілька!
+            </Text>
+            <Button mode="outlined" onPress={onCancel}>
+              Скасувати
+            </Button>
+          </View>
         );
       case "creating":
         return (
@@ -127,7 +129,7 @@ export default function SelectProduct({
           <>
             <TextInput
               mode="outlined"
-              label="Search products"
+              label="Пошук продуктів"
               value={searchQuery}
               onChangeText={handleSearch}
               style={styles.searchInput}
@@ -170,7 +172,7 @@ export default function SelectProduct({
         <Surface style={styles.container}>
           <View style={styles.header}>
             <Text variant="headlineMedium" style={styles.title}>
-              Select Product
+              Виберіть продукт
             </Text>
 
             <Button
@@ -181,8 +183,8 @@ export default function SelectProduct({
               style={styles.createButton}
             >
               {viewState === "creating"
-                ? "Cancel Creating"
-                : "Create New Product"}
+                ? "Скасувати створення"
+                : "Створити новий продукт"}
             </Button>
           </View>
 
@@ -194,7 +196,7 @@ export default function SelectProduct({
               onPress={onCancel}
               style={styles.cancelButton}
             >
-              Cancel
+              Скасувати
             </Button>
           )}
 
@@ -206,10 +208,10 @@ export default function SelectProduct({
             >
               <Surface style={styles.gramsContainer}>
                 <Text variant="titleLarge" style={styles.gramsTitle}>
-                  Enter amount in grams
+                  Введіть кількість в грамах
                 </Text>
                 <TextInput
-                  label="Grams"
+                  label="Грами"
                   value={grams.toString()}
                   onChangeText={(text) => setGrams(Number(text))}
                   keyboardType="number-pad"
@@ -221,7 +223,7 @@ export default function SelectProduct({
                     onPress={() => setSelectedProduct(null)}
                     style={styles.gramsButton}
                   >
-                    Cancel
+                    Скасувати
                   </Button>
                   <Button
                     mode="contained"
@@ -229,7 +231,7 @@ export default function SelectProduct({
                     disabled={!grams || Number(grams) <= 0}
                     style={styles.gramsButton}
                   >
-                    Add
+                    Додати
                   </Button>
                 </View>
               </Surface>
@@ -317,5 +319,10 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     marginBottom: 16,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });

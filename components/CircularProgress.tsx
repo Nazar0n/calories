@@ -1,6 +1,9 @@
-import React from "react";
-import { View, Text } from "react-native";
-import Svg, { Circle } from "react-native-svg";
+import React from 'react';
+import {
+  Text,
+  View,
+} from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 
 const CircularProgress = ({
   value,
@@ -36,7 +39,7 @@ const CircularProgress = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={percentage > 100 ? "blue" : "#e0e0e0"}
+          stroke={percentage > 100 ? "#7e6cb1" : "#e0e0e0"}
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -44,7 +47,7 @@ const CircularProgress = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="blue"
+          stroke="#7e6cb1"
           strokeWidth={strokeWidth}
           fill="none"
           strokeDasharray={circumference}
@@ -76,7 +79,7 @@ const CircularProgress = ({
             <Text style={{ fontWeight: "bold" }}>
               {Math.round(value)}/{maxValue}
             </Text>
-            <Text>kcal</Text>
+            <Text>{inPercent ? "%" : "ккал"}</Text>
           </View>
         )}
       </View>

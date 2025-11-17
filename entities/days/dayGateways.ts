@@ -1,7 +1,16 @@
-import { db } from "@/FirebaseConfig";
-import { collection, addDoc, doc, getDoc, Timestamp } from "firebase/firestore";
-import { Day, DayData } from "./Day";
-import { transformDates } from "@/utils/firebaseUtils";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  Timestamp,
+} from 'firebase/firestore';
+import { db } from '@/FirebaseConfig';
+import { transformDates } from '@/utils/firebaseUtils';
+import {
+  Day,
+  DayData,
+} from './Day';
 
 export async function createDay(dayData: DayData) {
   try {
@@ -16,10 +25,9 @@ export async function createDay(dayData: DayData) {
   }
 }
 
-export async function fetchToday(userId: string): Promise<Day | null> {
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-  const dayRef = doc(db, "days", `${userId}_${today}`);
-
+export async function fetchDayByDate(userId: string, date: Date): Promise<Day | null> {
+  const dateString = date.toISOString().split("T")[0]; // YYYY-MM-DD
+  const dayRef = doc(db, "days", `${userId}_${dateString}`);
   const daySnap = await getDoc(dayRef);
 
   if (!daySnap.exists()) {
@@ -38,4 +46,8 @@ export async function fetchToday(userId: string): Promise<Day | null> {
       createdAt: (intake.createdAt as Timestamp).toDate(),
     })),
   } as Day;
+}
+
+export async function fetchToday(userId: string): Promise<Day | null> {
+  return fetchDayByDate(userId, new Date());
 }

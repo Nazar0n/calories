@@ -1,10 +1,13 @@
-import { auth } from "@/FirebaseConfig";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
+import { router } from 'expo-router';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-} from "firebase/auth";
+  signOut as firebaseSignOut,
+} from 'firebase/auth';
+import { Language } from '@/entities/users/User';
+import { createUser } from '@/entities/users/userGateways';
+import { auth } from '@/FirebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const USER_KEY = "loggedInUser";
 
@@ -16,7 +19,17 @@ export async function signUp(email: string, password: string) {
       password
     );
     const user = userCredential.user;
-    if (user) router.replace("/(tabs)/testscreen");
+    
+    // Створюємо документ користувача в Firestore
+    await createUser(user.uid, {
+      email: user.email || email,
+      firstName: '',
+      lastName: '',
+      height: 0,
+      weight: 0,
+      dayOfBirth: new Date(),
+      language: Language.ua,
+    });
 
     await AsyncStorage.setItem(
       USER_KEY,
@@ -25,6 +38,8 @@ export async function signUp(email: string, password: string) {
         email: user.email,
       })
     );
+
+    if (user) router.replace("/(tabs)/home");
 
     console.log("User signed up and signed in:", user);
     return user;
@@ -42,7 +57,7 @@ export async function signIn(email: string, password: string) {
       password
     );
     const user = userCredential.user;
-    if (user) router.replace("/(tabs)/testscreen");
+    if (user) router.replace("/(tabs)/home");
 
     await AsyncStorage.setItem(
       USER_KEY,
@@ -70,12 +85,14 @@ export async function getStoredUser() {
   }
 }
 
-// export async function signOut() {
-//   try {
-//     await signOut();
-//     await AsyncStorage.removeItem(USER_KEY);
-//     console.log("User signed out");
-//   } catch (error) {
-//     console.error("Error signing out:", error);
-//   }
-// }
+export async function signOut() {
+  try {
+    await firebaseSignOut(auth);
+    await AsyncStorage.removeItem(USER_KEY);
+    router.replace("/");
+    console.log("User signed out");
+  } catch (error) {
+    console.error("Error signing out:", error);
+    throw error;
+  }
+}

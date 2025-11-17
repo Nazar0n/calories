@@ -1,12 +1,17 @@
-import { FC } from "react";
-import { View } from "react-native";
-import NutritionProgress from "./NutritionProgress";
-import { StyleSheet } from "react-native";
+import { FC } from 'react';
+import {
+  StyleSheet,
+  View,
+} from 'react-native';
+import NutritionProgress from './NutritionProgress';
 
 type NutritionDiagramsProps = {
   proteins: number;
   fats: number;
   carbs: number;
+  maxProteins: number;
+  maxFats: number;
+  maxCarbs: number;
   style?: any;
 };
 
@@ -14,31 +19,44 @@ const NutritionDiagrams: FC<NutritionDiagramsProps> = ({
   proteins,
   fats,
   carbs,
+  maxProteins,
+  maxFats,
+  maxCarbs,
   style,
 }) => {
   return (
     <View style={{ ...styles.container, ...style }}>
       <NutritionProgress
-        name="Proteins"
+        name="Білки"
         grams={proteins}
-        maxGrams={112}
+        maxGrams={maxProteins}
         size={70}
       />
-      <NutritionProgress name="Fats" grams={fats} maxGrams={70} size={70} />
-      <NutritionProgress name="Carbs" grams={carbs} maxGrams={171} size={70} />
+      <NutritionProgress
+        name="Жири"
+        grams={fats}
+        maxGrams={maxFats}
+        size={70}
+      />
+      <NutritionProgress
+        name="Вуглеводи"
+        grams={carbs}
+        maxGrams={maxCarbs}
+        size={70}
+        style={{ marginBottom: 10 }}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
-      alignItems: "center",
-      width: "80%",
-    },
-  });
-  
+  container: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "80%",
+  },
+});
 
 export default NutritionDiagrams;

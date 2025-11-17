@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-
 import {
   StyleSheet,
   View,
 } from 'react-native';
 import { Button } from 'react-native-paper';
-
 import { IntakeNutrition } from '@/entities/intakes/Intake';
 import { Product } from '@/entities/products/Product';
-
 import NutritionForm from './NutritionForm';
 import SelectProduct from './SelectProduct';
 
@@ -45,7 +42,7 @@ export default function AddFoodControls({ onAddIntake }: AddFoodControlsProps) {
         onPress={() => setIsFormVisible(!isFormVisible)}
         style={{ marginVertical: 16 }}
       >
-        {isFormVisible ? "Close" : "Add Food"}
+        {isFormVisible ? "Закрити" : "Додати прийом їжі"}
       </Button>
 
       {isFormVisible && (
@@ -55,7 +52,7 @@ export default function AddFoodControls({ onAddIntake }: AddFoodControlsProps) {
             onPress={() => setIsSelectProductVisible(true)}
             style={styles.formButton}
           >
-            Select Product
+            Вибрати продукт
           </Button>
         </View>
       )}

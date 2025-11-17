@@ -1,14 +1,17 @@
-import { FC } from "react";
-import { View } from "react-native";
-import { Text } from "react-native-paper";
-import { StyleSheet } from "react-native";
-import CircularProgress from "./CircularProgress";
+import { FC } from 'react';
+import {
+  StyleSheet,
+  View,
+} from 'react-native';
+import { Text } from 'react-native-paper';
+import CircularProgress from './CircularProgress';
 
 type NutritionProgressProps = {
   grams: number;
   maxGrams: number;
   name: string;
   size?: number;
+  style?: any;
 };
 
 const NutritionProgress: FC<NutritionProgressProps> = ({
@@ -16,9 +19,10 @@ const NutritionProgress: FC<NutritionProgressProps> = ({
   maxGrams,
   name,
   size,
+  style,
 }) => {
   return (
-    <View style={styles.container}>
+    <View style={{ ...styles.container, ...style }}>
       <CircularProgress
         value={grams}
         maxValue={maxGrams}
@@ -28,8 +32,8 @@ const NutritionProgress: FC<NutritionProgressProps> = ({
       />
       <View style={styles.nutritionStats}>
         <Text style={{ fontWeight: "bold" }}>{name}</Text>
-        <Text style={styles.currentNutritions}>{grams.toFixed(1)}</Text>
-        <Text>of {maxGrams.toFixed(1)}</Text>
+        <Text style={styles.currentNutritions}>{grams.toFixed(1)}г</Text>
+        <Text>з {maxGrams.toFixed(1)}г</Text>
       </View>
     </View>
   );

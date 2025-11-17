@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-
 import { View } from 'react-native';
 import {
   Button,
   TextInput,
 } from 'react-native-paper';
-
 import {
   IntakeNutrition,
   Nutritions,
 } from '@/entities/intakes/Intake';
 import { calculateIntakeNutritions } from '@/utils/nutritions.utils';
+
+enum NutritionKeys {
+  calories = "калорій",
+  proteins = "білків",
+  fats = "жирів",
+  carbs = "вуглеводів",
+  grams = "грамів",
+}
 
 const initialIntakeNutrition: IntakeNutrition = {
   calories: 0,
@@ -42,7 +48,8 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
   const handleSubmit = () => {
     const nutrition = calculateIntakeNutritions(productNutrition);
     onSubmit({
-      productName: productName.trim() || `Food (${productNutrition.calories} kcal)`,
+      productName:
+        productName.trim() || `Food (${productNutrition.calories} kcal)`,
       nutrition,
     });
     // Reset form
@@ -55,32 +62,28 @@ export default function NutritionForm({ style, onSubmit }: IntakeFormProps) {
       <TextInput
         value={productName}
         onChangeText={setProductName}
-        label="Product Name (optional)"
+        label="Назва продукту (необов'язково)"
         style={{ marginBottom: 16 }}
       />
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
         {nutritionKeys.map((nutrition) => (
           <TextInput
             key={nutrition}
             value={String(productNutrition[nutrition])}
-            label={`${nutrition} per 100g`}
+            label={`${NutritionKeys[nutrition]} на 100г`}
             onChangeText={(value) =>
               setProductNutrition((prev) => ({
                 ...prev,
                 [nutrition]: Number(value) || 0,
               }))
             }
-            style={{ width: '48%' }}
+            style={{ width: "48%" }}
             keyboardType="number-pad"
           />
         ))}
       </View>
-      <Button 
-        mode="contained" 
-        onPress={handleSubmit} 
-        style={{ marginTop: 16 }}
-      >
-        Add
+      <Button mode="contained" onPress={handleSubmit} style={{ marginTop: 16 }}>
+        Додати
       </Button>
     </View>
   );

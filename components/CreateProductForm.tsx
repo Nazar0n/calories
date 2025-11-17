@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import { getAuth } from 'firebase/auth';
 import {
   StyleSheet,
@@ -10,9 +9,15 @@ import {
   Text,
   TextInput,
 } from 'react-native-paper';
-
 import { Nutritions } from '@/entities/intakes/Intake';
 import { createProduct } from '@/entities/products/productGateways';
+
+enum NutritionKeys {
+  calories = "калорій",
+  proteins = "білків",
+  fats = "жирів",
+  carbs = "вуглеводів",
+}
 
 type CreateProductFormProps = {
   onSuccess: () => void;
@@ -51,17 +56,17 @@ export default function CreateProductForm({ onSuccess, onCancel }: CreateProduct
   return (
     <View style={styles.createForm}>
       <TextInput
-        label="Product Name"
+        label="Назва продукту"
         value={newProductName}
         onChangeText={setNewProductName}
         style={styles.input}
       />
-      <Text variant="titleMedium" style={styles.subtitle}>Nutrition per 100g</Text>
+      <Text variant="titleMedium" style={styles.subtitle}>Харчова цінність на 100г</Text>
       <View style={styles.nutritionGrid}>
         {nutritionFields.map((field) => (
           <TextInput
             key={field}
-            label={field.charAt(0).toUpperCase() + field.slice(1)}
+            label={NutritionKeys[field]}
             value={String(newProductNutrition[field])}
             onChangeText={(value) =>
               setNewProductNutrition((prev) => ({
@@ -80,7 +85,7 @@ export default function CreateProductForm({ onSuccess, onCancel }: CreateProduct
           onPress={onCancel}
           style={styles.button}
         >
-          Cancel
+          Скасувати
         </Button>
         <Button
           mode="contained"
@@ -89,7 +94,7 @@ export default function CreateProductForm({ onSuccess, onCancel }: CreateProduct
           disabled={createLoading || !newProductName.trim()}
           style={styles.button}
         >
-          Create
+          Створити
         </Button>
       </View>
     </View>
