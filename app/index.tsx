@@ -5,8 +5,8 @@ import {
 import { router } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
-  SafeAreaView,
   StyleSheet,
+  View,
 } from 'react-native';
 import {
   Button,
@@ -42,21 +42,21 @@ export default function AuthScreen() {
       await signIn(email, password);
     } catch (err: any) {
       const errorCode = err.code;
-      
+
       switch (errorCode) {
-        case 'auth/user-not-found':
+        case "auth/user-not-found":
           setError("Користувача з таким email не знайдено");
           break;
-        case 'auth/wrong-password':
+        case "auth/wrong-password":
           setError("Неправильний пароль");
           break;
-        case 'auth/invalid-email':
+        case "auth/invalid-email":
           setError("Невірний формат email");
           break;
-        case 'auth/invalid-credential':
+        case "auth/invalid-credential":
           setError("Невірний email або пароль");
           break;
-        case 'auth/too-many-requests':
+        case "auth/too-many-requests":
           setError("Занадто багато спроб. Спробуйте пізніше");
           break;
         default:
@@ -74,15 +74,15 @@ export default function AuthScreen() {
       await signUp(email, password);
     } catch (err: any) {
       const errorCode = err.code;
-      
+
       switch (errorCode) {
-        case 'auth/email-already-in-use':
+        case "auth/email-already-in-use":
           setError("Користувач з таким email вже існує");
           break;
-        case 'auth/invalid-email':
+        case "auth/invalid-email":
           setError("Невірний формат email");
           break;
-        case 'auth/weak-password':
+        case "auth/weak-password":
           setError("Пароль занадто слабкий. Мінімум 6 символів");
           break;
         default:
@@ -94,7 +94,7 @@ export default function AuthScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <TextInput
         textContentType="emailAddress"
         value={email}
@@ -112,8 +112,8 @@ export default function AuthScreen() {
         style={styles.input}
         disabled={loading}
       />
-      <Button 
-        mode="contained" 
+      <Button
+        mode="contained"
         onPress={handleSignIn}
         style={styles.button}
         loading={loading}
@@ -121,8 +121,8 @@ export default function AuthScreen() {
       >
         Увійти
       </Button>
-      <Button 
-        mode="contained" 
+      <Button
+        mode="contained"
         onPress={handleSignUp}
         style={styles.button}
         loading={loading}
@@ -130,19 +130,19 @@ export default function AuthScreen() {
       >
         Зареєструватися
       </Button>
-      
+
       <Snackbar
         visible={!!error}
         onDismiss={() => setError("")}
         duration={4000}
         action={{
-          label: 'OK',
+          label: "OK",
           onPress: () => setError(""),
         }}
       >
         {error}
       </Snackbar>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   input: {
     marginBottom: 16,
